@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -13,17 +13,9 @@ export default function Home() {
     { ssr: false },
   ), []);
 
-  const handleClick = async () => {
-    fetch('/api/isochrone')
-      .then(response => response.json())
-      .then(data => setGeoData(data));
-  }
-
-  const getIsochronesResponse = async () => {
-    return fetch('/api/isochrone')
-      .then(response => response.json())
-      .then(data => data);
-  }
+  const getIsochronesResponse = async () => fetch('/api/isochrone')
+    .then((response) => response.json())
+    .then((data) => data);
 
   const ringCoordsHashToArray = (ring) => (
     ring.map((latLng) => [latLng.lng, latLng.lat])
@@ -64,16 +56,15 @@ export default function Home() {
       type: 'FeatureCollection',
       features: featureList,
     };
-
-  }
+  };
 
   const [geoData, setGeoData] = useState(null);
 
   useEffect(async () => {
-    const isochrones = await getIsochronesResponse()
-    console.log(parseResponse(isochrones))
-    setGeoData(parseResponse(isochrones))
-  }, [])
+    const isochrones = await getIsochronesResponse();
+    console.log(parseResponse(isochrones));
+    setGeoData(parseResponse(isochrones));
+  }, []);
 
   return (
     <div>
@@ -82,12 +73,11 @@ export default function Home() {
       </Head>
 
       <main>
-        <button onClick={() => handleClick()}>trac</button>
         <Map>
           <MapHandler geojsonData={geoData} />
         </Map>
       </main>
 
     </div>
-  )
+  );
 }
