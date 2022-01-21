@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
@@ -22,28 +24,27 @@ function MapHandler() {
     const minutesInDay = 1440;
     const minuteInMs = 60000;
 
-    const screenshoter = new SimpleMapScreenshoter({});
+    const screenshoter = new SimpleMapScreenshoter({
+      hidden: true,
+    });
     screenshoter.addTo(map);
 
     const dates = [];
 
-    for (let i = 0; i < minutesInDay + 1; i += 1) {
+    for (let i = 0; i <= minutesInDay; i += 1) {
       dates.push(new Date(start.getTime() + i * minuteInMs).toISOString());
     }
 
-    let failures = 0;
-    dates.forEach(async (date) => {
+    for (const date of dates) {
       try {
         const res = await getIsochronesResponse(date);
-        const blob = await screenshoter.takeScreen('blob');
-        FileSaver.saveAs(blob, `${new Date()}.png`);
         setGeojsonData(timeMapResponseToGeoJSON(res));
+        const blob = await screenshoter.takeScreen('blob');
+        FileSaver.saveAs(blob, `${date}.png`);
       } catch (error) {
         console.error(error);
-        failures += 1;
-        console.log(failures);
       }
-    });
+    }
   };
 
   useEffect(async () => {
@@ -58,10 +59,6 @@ function MapHandler() {
   }, [geojsonData]);
 
   useEffect(async () => {
-    L.control.zoom({
-      position: 'bottomright',
-    }).addTo(map);
-
     try {
       const isochrones = await getIsochronesResponse(new Date().toISOString());
       setGeojsonData(timeMapResponseToGeoJSON(isochrones));
