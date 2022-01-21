@@ -4,7 +4,7 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-function Map({ children, styles }) {
+function Map({ children }) {
   return (
     <MapContainer
       center={[40.752655, -73.977295]}

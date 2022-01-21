@@ -5,7 +5,7 @@ import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import FileSaver from 'file-saver';
-import timeMapResponseToGeoJSON from '../../lib/isochroneMapper';
+import { timeMapResponseToGeoJSON, getPolygonFromBounds } from '../../lib/isochroneMapper';
 
 function MapHandler() {
   const map = useMap();
@@ -61,7 +61,7 @@ function MapHandler() {
   useEffect(async () => {
     try {
       const isochrones = await getIsochronesResponse(new Date().toISOString());
-      setGeojsonData(timeMapResponseToGeoJSON(isochrones));
+      setGeojsonData(timeMapResponseToGeoJSON(isochrones, getPolygonFromBounds(map)));
     } catch (error) {
       console.error(error);
     }
