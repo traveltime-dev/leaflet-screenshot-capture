@@ -20,7 +20,7 @@ export default async function handler(req, res) {
             walking_time: 1500,
           },
           travel_time: 3600,
-          departure_time: new Date().toISOString(),
+          departure_time: JSON.parse(req.body).timestamp,
         },
       ],
     });

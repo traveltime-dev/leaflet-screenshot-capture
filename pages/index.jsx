@@ -14,15 +14,48 @@ export default function Home() {
     { ssr: false },
   ), []);
 
-  const getIsochronesResponse = async () => fetch('/api/isochrone')
+  const getIsochronesResponse = async (timestamp) => fetch('/api/isochrone', {
+    method: 'POST',
+    body: JSON.stringify({ timestamp }),
+  })
     .then((response) => response.json())
     .then((data) => data);
 
   const [geoData, setGeoData] = useState(null);
   useEffect(async () => {
-    const isochrones = await getIsochronesResponse();
-    setGeoData(timeMapResponseToGeoJSON(isochrones));
+    try {
+      const isochrones = await getIsochronesResponse(new Date().toISOString());
+      setGeoData(timeMapResponseToGeoJSON(isochrones));
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
+
+  const capture = async () => {
+    const start = new Date();
+    const minutesInDay = 1440;
+    const minuteInMs = 60000;
+
+    const dates = [];
+
+    for (let i = 0; i < minutesInDay + 1; i += 1) {
+      dates.push(new Date(start.getTime() + i * minuteInMs).toISOString());
+    }
+
+    let failures = 0;
+    const captureBtn = document.querySelector('.leaflet-control-simpleMapScreenshoter-btn');
+    dates.forEach(async (date) => {
+      try {
+        const res = await getIsochronesResponse(date);
+        setGeoData(timeMapResponseToGeoJSON(res));
+        await captureBtn.click();
+      } catch (error) {
+        console.error(error);
+        failures += 1;
+        console.log(failures);
+      }
+    });
+  };
 
   return (
     <div>
@@ -31,6 +64,7 @@ export default function Home() {
       </Head>
 
       <main>
+        <button style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => capture()}>Start capture</button>
         <Map>
           <MapHandler geojsonData={geoData} />
         </Map>

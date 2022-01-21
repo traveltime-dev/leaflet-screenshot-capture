@@ -8,7 +8,7 @@ function Map({ children, styles }) {
   return (
     <MapContainer
       center={[40.752655, -73.977295]}
-      zoom={13}
+      zoom={11}
       scrollWheelZoom
       zoomControl={false}
       style={{ height: '100vh', width: '100%' }}
