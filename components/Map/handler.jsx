@@ -1,10 +1,11 @@
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
+import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 
 function MapHandler(props) {
   const map = useMap();
-  const { geojsonData, startingLocations } = props;
+  const { geojsonData } = props;
   const [geojsonRef, setGeojsonRef] = useState();
 
   useEffect(() => {
@@ -27,6 +28,13 @@ function MapHandler(props) {
     L.control.zoom({
       position: 'bottomright',
     }).addTo(map);
+
+    const screenshoter = new SimpleMapScreenshoter({});
+    screenshoter.addTo(map);
+
+    return () => {
+      screenshoter.remove();
+    };
   }, []);
 
   return (

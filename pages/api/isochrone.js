@@ -12,13 +12,14 @@ export default async function handler(req, res) {
         {
           id: randomBytes(16).toString('hex'),
           coords: {
-            lat: 51.53605,
-            lng: -0.12513,
+            lat: 40.752655,
+            lng: -73.977295,
           },
           transportation: {
             type: 'public_transport',
+            walking_time: 1500,
           },
-          travel_time: 900,
+          travel_time: 3600,
           departure_time: new Date().toISOString(),
         },
       ],
