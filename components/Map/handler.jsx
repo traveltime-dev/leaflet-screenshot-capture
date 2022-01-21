@@ -19,7 +19,7 @@ function MapHandler() {
     .then((response) => response.json())
     .then((data) => data);
 
-  const capture = async () => {
+  const handleCapture = async () => {
     const start = new Date();
     const minutesInDay = 1440;
     const minuteInMs = 60000;
@@ -38,7 +38,7 @@ function MapHandler() {
     for (const date of dates) {
       try {
         const res = await getIsochronesResponse(date);
-        setGeojsonData(timeMapResponseToGeoJSON(res));
+        setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
         const blob = await screenshoter.takeScreen('blob');
         FileSaver.saveAs(blob, `${date}.png`);
       } catch (error) {
@@ -68,7 +68,7 @@ function MapHandler() {
   }, []);
 
   return (
-    <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => capture()}>Start capture</button>
+    <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>
   );
 }
 
