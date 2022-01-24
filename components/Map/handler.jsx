@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { useMap } from 'react-leaflet';
@@ -29,6 +30,7 @@ function MapHandler() {
     .then((data) => data);
 
   const handleCapture = async () => {
+    console.log('starting capture');
     setCaptureInProgress(true);
 
     const start = new Date();
@@ -42,12 +44,13 @@ function MapHandler() {
 
     const dates = [];
 
-    for (let i = 0; i <= minutesInDay; i += 1) {
+    for (let i = 0; i < minutesInDay; i += 1) {
       dates.push(new Date(start.getTime() + i * minuteInMs));
     }
 
-    for (const date of dates) {
+    for (const [index, date] of dates.entries()) {
       try {
+        console.log(`processing entry #${index + 1} out of ${dates.length}`);
         const res = await getIsochronesResponse(date.toISOString());
         setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
         setMapTime(getHoursAndMinutes(date));
@@ -58,6 +61,7 @@ function MapHandler() {
       }
     }
     setCaptureInProgress(false);
+    console.log('capture complete');
   };
 
   useEffect(async () => {
@@ -84,10 +88,16 @@ function MapHandler() {
     <>
       {!captureInProgress
       && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
-      <div
-        className="timestamp"
+      <img
+        src="/images/TT_logo-removebg.png"
+        alt="TravelTime logo"
         style={{
-          position: 'absolute', zIndex: 1000, left: 0, color: 'white', fontSize: 30, padding: '20px',
+          position: 'absolute', zIndex: 1000, width: '156px', height: '30.5px', left: '20px', top: '20px',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute', zIndex: 1000, left: 0, bottom: 0, color: 'white', fontSize: 30, padding: '20px',
         }}
       >
         {mapTime}
