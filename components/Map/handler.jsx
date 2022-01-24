@@ -11,6 +11,15 @@ function MapHandler() {
   const map = useMap();
   const [geojsonRef, setGeojsonRef] = useState();
   const [geojsonData, setGeojsonData] = useState(null);
+  const [mapTime, setMapTime] = useState();
+  const [captureInProgress, setCaptureInProgress] = useState(false);
+
+  const getHoursAndMinutes = (date) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (minutes < 10) return `${hours}:0${minutes}`;
+    return `${hours}:${minutes}`;
+  };
 
   const getIsochronesResponse = async (timestamp) => fetch('/api/isochrone', {
     method: 'POST',
@@ -20,6 +29,8 @@ function MapHandler() {
     .then((data) => data);
 
   const handleCapture = async () => {
+    setCaptureInProgress(true);
+
     const start = new Date();
     const minutesInDay = 1440;
     const minuteInMs = 60000;
@@ -32,19 +43,21 @@ function MapHandler() {
     const dates = [];
 
     for (let i = 0; i <= minutesInDay; i += 1) {
-      dates.push(new Date(start.getTime() + i * minuteInMs).toISOString());
+      dates.push(new Date(start.getTime() + i * minuteInMs));
     }
 
     for (const date of dates) {
       try {
-        const res = await getIsochronesResponse(date);
+        const res = await getIsochronesResponse(date.toISOString());
         setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
+        setMapTime(getHoursAndMinutes(date));
         const blob = await screenshoter.takeScreen('blob');
         FileSaver.saveAs(blob, `${date}.png`);
       } catch (error) {
         console.error(error);
       }
     }
+    setCaptureInProgress(false);
   };
 
   useEffect(async () => {
@@ -68,7 +81,18 @@ function MapHandler() {
   }, []);
 
   return (
-    <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>
+    <>
+      {!captureInProgress
+      && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
+      <div
+        className="timestamp"
+        style={{
+          position: 'absolute', zIndex: 1000, left: 0, color: 'white', fontSize: 30, padding: '20px',
+        }}
+      >
+        {mapTime}
+      </div>
+    </>
   );
 }
 
