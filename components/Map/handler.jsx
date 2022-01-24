@@ -91,15 +91,9 @@ function MapHandler() {
       <img
         src="/images/TT_logo-removebg.png"
         alt="TravelTime logo"
-        style={{
-          position: 'absolute', zIndex: 1000, width: '156px', height: '30.5px', left: '20px', top: '20px',
-        }}
+        className="logo"
       />
-      <div
-        style={{
-          position: 'absolute', zIndex: 1000, left: 0, bottom: 0, color: 'white', fontSize: 30, padding: '20px',
-        }}
-      >
+      <div className="timestamp">
         {mapTime}
       </div>
     </>

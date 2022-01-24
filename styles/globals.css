@@ -14,3 +14,32 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@font-face {
+  font-family: "Hkgrotesk" ;
+  src: url('https://assets.website-files.com/60759d68c40946f0d9eb7a9f/60c316454b27bf967103bd39_HKGrotesk-Medium.otf');
+}
+
+.logo {
+  position: absolute;
+  z-index: 1000;
+  width: 156px;
+  height: 30.5px;
+  left: 20px;
+  top: 20px;
+
+}
+
+.timestamp {
+  position:absolute;
+  z-index: 1000;
+  left: 0;
+  bottom: 0;
+  color: white;
+  font-size: 30px;
+  padding: 20px;
+  font-family: "Hkgrotesk";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
