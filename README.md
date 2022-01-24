@@ -18,3 +18,5 @@ So far the application is mostly hardcoded, if you wish to configure the followi
 - npm run dev
 - browse localhost:3000
 - Click 'Start capture' in top right corner to start a capture run
+
+Use node 16 or above, application was not tested on prior versions.
