@@ -77,6 +77,16 @@ function MapHandler() {
   }, [geojsonData]);
 
   useEffect(async () => {
+    const markers = L.layerGroup();
+    const marker = L.marker({ lat: 40.752655, lng: -73.977295 }, {
+      icon: L.icon({
+        iconUrl: '/images/map_marker.svg',
+        iconSize: [26, 37],
+      }),
+    });
+    marker.addTo(markers);
+    markers.addTo(map);
+
     try {
       const isochrones = await getIsochronesResponse(new Date().toISOString());
       setGeojsonData(timeMapResponseToGeoJSON(isochrones, getPolygonFromBounds(map)));
