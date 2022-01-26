@@ -55,7 +55,7 @@ function MapHandler() {
         setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
         setMapTime(getHoursAndMinutes(date));
         const blob = await screenshoter.takeScreen('blob');
-        FileSaver.saveAs(blob, `${date}.png`);
+        FileSaver.saveAs(blob, `image-${index + 1}.png`);
       } catch (error) {
         console.error(error);
       }
@@ -87,12 +87,14 @@ function MapHandler() {
   return (
     <>
       {!captureInProgress
-      && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
-      <img
-        src="/images/TT_logo-removebg.png"
-        alt="TravelTime logo"
-        className="logo"
-      />
+        && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
+          
+      <div className="logo">
+        <img
+          src="/images/tt.png"
+          alt="TravelTime logo"
+        />
+      </div>
       <div className="timestamp">
         {mapTime}
       </div>

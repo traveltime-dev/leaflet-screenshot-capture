@@ -1,9 +1,13 @@
+@font-face {
+  font-family: "Hkgrotesk" ;
+  src: url('https://assets.website-files.com/60759d68c40946f0d9eb7a9f/60c316454b27bf967103bd39_HKGrotesk-Medium.otf');
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Hkgrotesk"
 }
 
 a {
@@ -15,19 +19,18 @@ a {
   box-sizing: border-box;
 }
 
-@font-face {
-  font-family: "Hkgrotesk" ;
-  src: url('https://assets.website-files.com/60759d68c40946f0d9eb7a9f/60c316454b27bf967103bd39_HKGrotesk-Medium.otf');
-}
-
 .logo {
   position: absolute;
   z-index: 1000;
-  width: 156px;
-  height: 30.5px;
-  left: 20px;
-  top: 20px;
+  width: 500px;
+  height: 110px;
+  right: 20px;
+  bottom: 20px;
+}
 
+.logo img {
+  height: 100%;
+  width: 100%;
 }
 
 .timestamp {
@@ -35,11 +38,12 @@ a {
   z-index: 1000;
   left: 0;
   bottom: 0;
-  color: white;
-  font-size: 30px;
+  color: #f9f9f9;
+  font-size: 110px;
   padding: 20px;
   font-family: "Hkgrotesk";
-  font-weight: 500;
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
+  line-height: 110px;
 }
