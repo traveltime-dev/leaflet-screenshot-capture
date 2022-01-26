@@ -34,6 +34,7 @@ function MapHandler() {
     setCaptureInProgress(true);
 
     const start = new Date();
+    start.setHours(4, 0);
     const minutesInDay = 1440;
     const minuteInMs = 60000;
 
@@ -88,7 +89,7 @@ function MapHandler() {
     <>
       {!captureInProgress
         && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
-          
+
       <div className="logo">
         <img
           src="/images/tt.png"
