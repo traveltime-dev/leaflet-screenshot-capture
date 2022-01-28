@@ -24,9 +24,9 @@ function MapHandler() {
     let fixedHours = hours;
     if (fixedHours === -2) fixedHours = 22;
     if (fixedHours === -1) fixedHours = 23;
-    // const displayHours = fixedHours < 10 ? `0${fixedHours}` : fixedHours;
+    const displayHours = fixedHours < 10 ? `0${fixedHours}` : fixedHours;
     // quick fix end
-    const displayHours = hours < 10 ? `0${hours}` : hours;
+    // const displayHours = hours < 10 ? `0${hours}` : hours;
     const minutes = date.getMinutes();
     const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
     return `${displayHours}:${displayMinutes}`;
