@@ -15,11 +15,15 @@ function MapHandler() {
   const [mapTime, setMapTime] = useState();
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
+  const getStartHours = (hours) => hours + 2; // offset Isos conversion
+  const startHours = getStartHours(0);
+
   const getHoursAndMinutes = (date) => {
-    const hours = date.getHours();
+    const hours = date.getHours() - 2; // offset +2 GMT
+    const displayHours = hours < 10 ? `0${hours}` : hours;
     const minutes = date.getMinutes();
-    if (minutes < 10) return `${hours}:0${minutes}`;
-    return `${hours}:${minutes}`;
+    const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${displayHours}:${displayMinutes}`;
   };
 
   const getIsochronesResponse = async (timestamp) => fetch('/api/isochrone', {
@@ -34,7 +38,7 @@ function MapHandler() {
     setCaptureInProgress(true);
 
     const start = new Date();
-    start.setHours(4, 0);
+    start.setHours(startHours, 0);
     const minutesInDay = 1440;
     const minuteInMs = 60000;
 
@@ -50,6 +54,7 @@ function MapHandler() {
     }
 
     for (const [index, date] of dates.entries()) {
+      console.log(`date in client: ${date}`);
       try {
         console.log(`processing entry #${index + 1} out of ${dates.length}`);
         const res = await getIsochronesResponse(date.toISOString());
@@ -88,7 +93,11 @@ function MapHandler() {
     markers.addTo(map);
 
     try {
-      const isochrones = await getIsochronesResponse(new Date().toISOString());
+      const start = new Date();
+      start.setHours(startHours, 0);
+      const isochrones = await getIsochronesResponse(
+        start.toISOString(),
+      );
       setGeojsonData(timeMapResponseToGeoJSON(isochrones, getPolygonFromBounds(map)));
     } catch (error) {
       console.error(error);
