@@ -7,6 +7,8 @@ process.env.TRAVELTIME_KEY = '8d8ba745bfe89933069cf7ec4b1b87ad';
 
 export default async function handler(req, res) {
   try {
+    const departure = JSON.parse(req.body).timestamp;
+    const modified = `${departure.substring(0, departure.lastIndexOf('.'))}+05:00`;
     const result = await traveltimejs.time_map({
       departure_searches: [
         {
@@ -20,7 +22,7 @@ export default async function handler(req, res) {
             walking_time: 1500,
           },
           travel_time: 3600,
-          departure_time: JSON.parse(req.body).timestamp,
+          departure_time: modified,
         },
       ],
     });
