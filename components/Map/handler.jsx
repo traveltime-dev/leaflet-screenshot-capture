@@ -16,7 +16,7 @@ function MapHandler() {
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
   const getStartHours = (hours) => hours + 2; // offset Isos conversion
-  const startHours = getStartHours(22);
+  const startHours = getStartHours(0);
 
   const getHoursAndMinutes = (date) => {
     const hours = date.getHours() - 2; // offset +2 GMT
