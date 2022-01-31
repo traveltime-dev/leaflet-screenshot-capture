@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   try {
     const departure = JSON.parse(req.body).timestamp;
     const modified = `${departure.substring(0, departure.lastIndexOf('.'))}+05:00`;
+    console.log(`request date: ${modified}`);
     const result = await traveltimejs.time_map({
       departure_searches: [
         {

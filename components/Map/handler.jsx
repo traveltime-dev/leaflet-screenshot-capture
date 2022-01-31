@@ -44,7 +44,7 @@ function MapHandler() {
     setCaptureInProgress(true);
 
     const start = new Date();
-    start.setHours(startHours, 0);
+    start.setHours(startHours, 0, 0);
     const minutesInDay = 1440;
     const minuteInMs = 60000;
 
@@ -100,7 +100,7 @@ function MapHandler() {
 
     try {
       const start = new Date();
-      start.setHours(startHours, 0);
+      start.setHours(startHours, 0, 0);
       const isochrones = await getIsochronesResponse(
         start.toISOString(),
       );
