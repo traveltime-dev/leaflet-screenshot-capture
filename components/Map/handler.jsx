@@ -5,8 +5,9 @@ import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
-import FileSaver from 'file-saver';
 import { timeMapResponseToGeoJSON, getPolygonFromBounds } from '../../lib/isochroneMapper';
+import { incrementDate, incrementTraveltime } from '../../lib/screenshot';
+import getIsochronesResponse from '../../lib/service';
 
 function MapHandler() {
   const map = useMap();
@@ -19,88 +20,22 @@ function MapHandler() {
   const getStartHours = (hours) => hours + 2; // offset Isos conversion
   const startHours = getStartHours(18);
 
-  const getHoursAndMinutes = (date) => {
-    const hours = date.getHours() - 2; // offset +2 GMT
-    // quick fix start
-    let fixedHours = hours;
-    if (fixedHours === -2) fixedHours = 22;
-    if (fixedHours === -1) fixedHours = 23;
-    const displayHours = fixedHours < 10 ? `0${fixedHours}` : fixedHours;
-    // quick fix end
-    // const displayHours = hours < 10 ? `0${hours}` : hours;
-    const minutes = date.getMinutes();
-    const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${displayHours}:${displayMinutes}`;
-  };
-
-  const getIsochronesResponse = async (timestamp, traveltime) => fetch('/api/isochrone', {
-    method: 'POST',
-    body: JSON.stringify({ timestamp, traveltime }),
-  })
-    .then((response) => response.json())
-    .then((data) => data);
-
   const handleCapture = async () => {
     console.log('starting capture');
     setCaptureInProgress(true);
-
-    const start = new Date();
-    start.setHours(startHours, 0, 0);
-    const minutesInDay = 1440;
-    const minuteInMs = 60000;
 
     const screenshoter = new SimpleMapScreenshoter({
       hidden: true,
     });
     screenshoter.addTo(map);
 
-    // const dates = [];
+    // TODO add logic to config between
 
-    // for (let i = 0; i < minutesInDay; i += 1) {
-    //   dates.push(new Date(start.getTime() + i * minuteInMs));
-    // }
+    await incrementDate(setGeojsonData, map, setMapTime, screenshoter, startHours);
+    // await incrementTraveltime(setGeojsonData, map, setCurrentTraveltime, screenshoter, startHours);
 
-    // for (const [index, date] of dates.entries()) {
-    //   console.log(`date in client: ${date}`);
-    //   try {
-    //     console.log(`processing entry #${index + 1} out of ${dates.length}`);
-    //     const res = await getIsochronesResponse(date.toISOString(), 5);
-    //     setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
-    //     setMapTime(getHoursAndMinutes(date));
-    //     const blob = await screenshoter.takeScreen('blob');
-    //     FileSaver.saveAs(blob, `image-${index + 1}.png`);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-    // setCaptureInProgress(false);
-    // console.log('capture complete');
-
-    setMapTime(getHoursAndMinutes(start));
-
-    const startMinutes = 5;
-    const startSeconds = startMinutes * 60;
-    const endMinutes = 60 * 60;
-
-    async function* asyncGenerator() {
-      let i = startMinutes - 1;
-      while (i < endMinutes) {
-        yield {
-          seconds: startSeconds + (60 * i),
-          increment: i += 1,
-        };
-      }
-    }
-
-    (async function () {
-      for await (const num of asyncGenerator()) {
-        const res = await getIsochronesResponse(start.toISOString(), num.seconds);
-        setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
-        setCurrentTraveltime(num.increment);
-        const blob = await screenshoter.takeScreen('blob');
-        FileSaver.saveAs(blob, `image-${num.increment}.png`);
-      }
-    }());
+    console.log('done capture');
+    setCaptureInProgress(false);
   };
 
   useEffect(async () => {
@@ -116,7 +51,7 @@ function MapHandler() {
 
   useEffect(async () => {
     const markers = L.layerGroup();
-    const marker = L.marker({ lat: 40.752655, lng: -73.977295 }, {
+    const marker = L.marker({ lat: 40.750580, lng: -73.993584 }, {
       icon: L.icon({
         iconUrl: '/images/map_marker.svg',
         iconSize: [26, 37],
@@ -149,13 +84,12 @@ function MapHandler() {
         />
       </div>
       <div className="timestamp">
-        {/* <div>
+        <div>
           {mapTime}
-        </div> */}
-
+        </div>
       </div>
 
-      {
+      {/* {
         captureInProgress && (
           <div className="reachable-minutes-text">
             <div>
@@ -163,7 +97,7 @@ function MapHandler() {
             </div>
           </div>
         )
-      }
+      } */}
     </>
   );
 }
