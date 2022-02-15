@@ -149,17 +149,21 @@ function MapHandler() {
         />
       </div>
       <div className="timestamp">
-        <div>
+        {/* <div>
           {mapTime}
-        </div>
-        {
+        </div> */}
+
+      </div>
+
+      {
         captureInProgress && (
-        <div>
-          {`${currentTraveltime} min`}
-        </div>
+          <div className="reachable-minutes-text">
+            <div>
+              {` Where's reachable from Penn Station within ${currentTraveltime} minutes`}
+            </div>
+          </div>
         )
       }
-      </div>
     </>
   );
 }
