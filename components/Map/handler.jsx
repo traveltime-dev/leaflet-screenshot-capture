@@ -1,12 +1,9 @@
-/* eslint-disable no-console */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import { timeMapResponseToGeoJSON, getPolygonFromBounds } from '../../lib/isochroneMapper';
-import { incrementDate, incrementTraveltime } from '../../lib/screenshot';
+import { screenshotByDate, screenshotByTraveltime } from '../../lib/screenshot';
 import getIsochronesResponse from '../../lib/service';
 
 function MapHandler() {
@@ -29,10 +26,17 @@ function MapHandler() {
     });
     screenshoter.addTo(map);
 
-    // TODO add logic to config between
+    const startDate = new Date();
+    startDate.setHours(startHours, 0, 0);
 
-    await incrementDate(setGeojsonData, map, setMapTime, screenshoter, startHours);
-    // await incrementTraveltime(setGeojsonData, map, setCurrentTraveltime, screenshoter, startHours);
+    // await screenshotByDate(map, screenshoter, setGeojsonData, setMapTime, startDate);
+    await screenshotByTraveltime(
+      map,
+      screenshoter,
+      setGeojsonData,
+      setCurrentTraveltime,
+      startDate,
+    );
 
     console.log('done capture');
     setCaptureInProgress(false);
@@ -72,6 +76,8 @@ function MapHandler() {
     }
   }, []);
 
+  // TODO add config
+  // TODO add logic to use different capture methods (config dependant)
   return (
     <>
       {!captureInProgress
