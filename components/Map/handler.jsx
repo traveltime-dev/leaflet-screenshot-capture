@@ -13,10 +13,11 @@ function MapHandler() {
   const [geojsonRef, setGeojsonRef] = useState();
   const [geojsonData, setGeojsonData] = useState(null);
   const [mapTime, setMapTime] = useState();
+  const [currentTraveltime, setCurrentTraveltime] = useState();
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
   const getStartHours = (hours) => hours + 2; // offset Isos conversion
-  const startHours = getStartHours(0);
+  const startHours = getStartHours(18);
 
   const getHoursAndMinutes = (date) => {
     const hours = date.getHours() - 2; // offset +2 GMT
@@ -32,9 +33,9 @@ function MapHandler() {
     return `${displayHours}:${displayMinutes}`;
   };
 
-  const getIsochronesResponse = async (timestamp) => fetch('/api/isochrone', {
+  const getIsochronesResponse = async (timestamp, traveltime) => fetch('/api/isochrone', {
     method: 'POST',
-    body: JSON.stringify({ timestamp }),
+    body: JSON.stringify({ timestamp, traveltime }),
   })
     .then((response) => response.json())
     .then((data) => data);
@@ -53,27 +54,53 @@ function MapHandler() {
     });
     screenshoter.addTo(map);
 
-    const dates = [];
+    // const dates = [];
 
-    for (let i = 0; i < minutesInDay; i += 1) {
-      dates.push(new Date(start.getTime() + i * minuteInMs));
-    }
+    // for (let i = 0; i < minutesInDay; i += 1) {
+    //   dates.push(new Date(start.getTime() + i * minuteInMs));
+    // }
 
-    for (const [index, date] of dates.entries()) {
-      console.log(`date in client: ${date}`);
-      try {
-        console.log(`processing entry #${index + 1} out of ${dates.length}`);
-        const res = await getIsochronesResponse(date.toISOString());
-        setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
-        setMapTime(getHoursAndMinutes(date));
-        const blob = await screenshoter.takeScreen('blob');
-        FileSaver.saveAs(blob, `image-${index + 1}.png`);
-      } catch (error) {
-        console.error(error);
+    // for (const [index, date] of dates.entries()) {
+    //   console.log(`date in client: ${date}`);
+    //   try {
+    //     console.log(`processing entry #${index + 1} out of ${dates.length}`);
+    //     const res = await getIsochronesResponse(date.toISOString(), 5);
+    //     setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
+    //     setMapTime(getHoursAndMinutes(date));
+    //     const blob = await screenshoter.takeScreen('blob');
+    //     FileSaver.saveAs(blob, `image-${index + 1}.png`);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // }
+    // setCaptureInProgress(false);
+    // console.log('capture complete');
+
+    setMapTime(getHoursAndMinutes(start));
+
+    const startMinutes = 5;
+    const startSeconds = startMinutes * 60;
+    const endMinutes = 60 * 60;
+
+    async function* asyncGenerator() {
+      let i = startMinutes - 1;
+      while (i < endMinutes) {
+        yield {
+          seconds: startSeconds + (60 * i),
+          increment: i += 1,
+        };
       }
     }
-    setCaptureInProgress(false);
-    console.log('capture complete');
+
+    (async function () {
+      for await (const num of asyncGenerator()) {
+        const res = await getIsochronesResponse(start.toISOString(), num.seconds);
+        setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
+        setCurrentTraveltime(num.increment);
+        const blob = await screenshoter.takeScreen('blob');
+        FileSaver.saveAs(blob, `image-${num.increment}.png`);
+      }
+    }());
   };
 
   useEffect(async () => {
@@ -121,8 +148,11 @@ function MapHandler() {
           alt="TravelTime logo"
         />
       </div>
-      <div className="timestamp">
+      {/* <div className="timestamp">
         {mapTime}
+      </div> */}
+      <div className="timestamp">
+        {`${currentTraveltime} minutes`}
       </div>
     </>
   );
