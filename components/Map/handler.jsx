@@ -148,11 +148,17 @@ function MapHandler() {
           alt="TravelTime logo"
         />
       </div>
-      {/* <div className="timestamp">
-        {mapTime}
-      </div> */}
       <div className="timestamp">
-        {`${currentTraveltime} minutes`}
+        <div>
+          {mapTime}
+        </div>
+        {
+        captureInProgress && (
+        <div>
+          {`${currentTraveltime} min`}
+        </div>
+        )
+      }
       </div>
     </>
   );

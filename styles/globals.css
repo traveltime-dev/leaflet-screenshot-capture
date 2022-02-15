@@ -46,4 +46,10 @@ a {
   font-style: normal;
   font-display: swap;
   line-height: 110px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.timestamp div {
+  margin-right: 60px;
 }
