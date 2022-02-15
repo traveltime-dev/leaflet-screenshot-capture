@@ -14,8 +14,8 @@ export default async function handler(req, res) {
         {
           id: randomBytes(16).toString('hex'),
           coords: {
-            lat: 40.752655,
-            lng: -73.977295,
+            lat: 40.750580,
+            lng: -73.993584,
           },
           transportation: {
             type: 'public_transport',

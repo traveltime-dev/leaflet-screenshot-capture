@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
 function Map({ children }) {
   return (
     <MapContainer
-      center={[40.752655, -73.977295]}
+      center={[40.750580, -73.993584]}
       zoom={11}
       scrollWheelZoom
       zoomControl={false}
