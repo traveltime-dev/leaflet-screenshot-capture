@@ -4,13 +4,15 @@ This is a Next.js application using Leaflet map and TravelTime API to export ima
 
 ## Configuration
 
-So far the application is mostly hardcoded, if you wish to configure the following items you can update the code in: 
+App can be configured via `config.json`.
 
-- Run duration - update `minutesInDay` const in `handler.jsx` `handleCapture` function
-- Isochrone style - update `properties` in `isochroneMapper.js`
-- Default map zoom and center - update map properties in `components/Map/index.js`
-- API request - update `departure_searches` object in `isochrone.js` api route
-
+- `coords` - map and marker center and request coords
+- `resolution` - css height and width property strings in case you need to set a particular resolution. Will default to full screen if left empty.
+- `zoom` - default map zoom level
+- `mode` - changes capture mode. Should be either `"date"` or `"traveltime"`
+- `startHour` - sets starting hour for api requests.
+- `locationName` - location name used in `traveltime mode`
+- `defaultTraveltime` - sets api request traveltime in `date` mode
 
 # How to run
 
