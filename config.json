@@ -1,0 +1,15 @@
+{
+    "coords": {
+        "lat": 40.750580,
+        "lng": -73.993584
+    },
+    "resolution": {
+        "height": "",
+        "width": ""
+    },
+    "zoom": 11,
+    "mode": "date",
+    "startHour": 18,
+    "locationName": "Penn Station",
+    "defaultTraveltime": 3600
+}

@@ -2,9 +2,8 @@ import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
-import { timeMapResponseToGeoJSON, getPolygonFromBounds } from '../../lib/isochroneMapper';
 import { screenshotByDate, screenshotByTraveltime } from '../../lib/screenshot';
-import getIsochronesResponse from '../../lib/service';
+import * as config from '../../config.json';
 
 function MapHandler() {
   const map = useMap();
@@ -15,7 +14,7 @@ function MapHandler() {
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
   const getStartHours = (hours) => hours + 2; // offset Isos conversion
-  const startHours = getStartHours(18);
+  const startHours = getStartHours(config.startHour);
 
   const handleCapture = async () => {
     console.log('starting capture');
@@ -29,14 +28,17 @@ function MapHandler() {
     const startDate = new Date();
     startDate.setHours(startHours, 0, 0);
 
-    // await screenshotByDate(map, screenshoter, setGeojsonData, setMapTime, startDate);
-    await screenshotByTraveltime(
-      map,
-      screenshoter,
-      setGeojsonData,
-      setCurrentTraveltime,
-      startDate,
-    );
+    if (config.mode === 'date') {
+      await screenshotByDate(map, screenshoter, setGeojsonData, setMapTime, startDate);
+    } else {
+      await screenshotByTraveltime(
+        map,
+        screenshoter,
+        setGeojsonData,
+        setCurrentTraveltime,
+        startDate,
+      );
+    }
 
     console.log('done capture');
     setCaptureInProgress(false);
@@ -55,7 +57,7 @@ function MapHandler() {
 
   useEffect(async () => {
     const markers = L.layerGroup();
-    const marker = L.marker({ lat: 40.750580, lng: -73.993584 }, {
+    const marker = L.marker({ lat: config.coords.lat, lng: config.coords.lng }, {
       icon: L.icon({
         iconUrl: '/images/map_marker.svg',
         iconSize: [26, 37],
@@ -63,26 +65,24 @@ function MapHandler() {
     });
     marker.addTo(markers);
     markers.addTo(map);
-
-    try {
-      const start = new Date();
-      start.setHours(startHours, 0, 0);
-      const isochrones = await getIsochronesResponse(
-        start.toISOString(),
-      );
-      setGeojsonData(timeMapResponseToGeoJSON(isochrones, getPolygonFromBounds(map)));
-    } catch (error) {
-      console.error(error);
-    }
   }, []);
 
-  // TODO add config
-  // TODO add logic to use different capture methods (config dependant)
   return (
     <>
       {!captureInProgress
-        && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
-
+        && (
+        <button
+          type="button"
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            right: 0,
+          }}
+          onClick={() => handleCapture()}
+        >
+          Start capture
+        </button>
+        )}
       <div className="logo">
         <img
           src="/images/tt.png"
@@ -95,15 +95,15 @@ function MapHandler() {
         </div>
       </div>
 
-      {/* {
-        captureInProgress && (
+      {
+        (captureInProgress && config.mode === 'traveltime') && (
           <div className="reachable-minutes-text">
             <div>
-              {` Where's reachable from Penn Station within ${currentTraveltime} minutes`}
+              {` Where's reachable from ${config.locationName} within ${currentTraveltime} minutes`}
             </div>
           </div>
         )
-      } */}
+      }
     </>
   );
 }

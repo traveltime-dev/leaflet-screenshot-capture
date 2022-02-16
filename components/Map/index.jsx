@@ -3,15 +3,19 @@ import {
   TileLayer,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import * as config from '../../config.json';
 
 function Map({ children }) {
   return (
     <MapContainer
-      center={[40.750580, -73.993584]}
-      zoom={11}
+      center={[config.coords.lat, config.coords.lng]}
+      zoom={config.zoom}
       scrollWheelZoom
       zoomControl={false}
-      style={{ height: '100vh', width: '100%' }}
+      style={{
+        height: config.resolution.height || '100vh',
+        width: config.resolution.width || '100%',
+      }}
     >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> | Created with <a href="http://traveltime.com" target="_blank">TravelTime API</a>'

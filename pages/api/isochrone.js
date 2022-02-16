@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import * as config from '../../config.json';
 
 const traveltimejs = require('traveltimejs');
 
@@ -14,14 +15,14 @@ export default async function handler(req, res) {
         {
           id: randomBytes(16).toString('hex'),
           coords: {
-            lat: 40.750580,
-            lng: -73.993584,
+            lat: config.coords.lat,
+            lng: config.coords.lng,
           },
           transportation: {
             type: 'public_transport',
             walking_time: traveltime < 1500 ? traveltime : 1500,
           },
-          travel_time: traveltime || 3600,
+          travel_time: traveltime || config.defaultTraveltime,
           departure_time: gmtModifiedDate,
         },
       ],
