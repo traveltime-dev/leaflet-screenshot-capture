@@ -1,79 +1,47 @@
-/* eslint-disable no-console */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
-import FileSaver from 'file-saver';
-import { timeMapResponseToGeoJSON, getPolygonFromBounds } from '../../lib/isochroneMapper';
+import { screenshotByDate, screenshotByTraveltime } from '../../lib/screenshot';
+import * as config from '../../config.json';
 
 function MapHandler() {
   const map = useMap();
   const [geojsonRef, setGeojsonRef] = useState();
   const [geojsonData, setGeojsonData] = useState(null);
   const [mapTime, setMapTime] = useState();
+  const [currentTraveltime, setCurrentTraveltime] = useState();
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
   const getStartHours = (hours) => hours + 2; // offset Isos conversion
-  const startHours = getStartHours(0);
-
-  const getHoursAndMinutes = (date) => {
-    const hours = date.getHours() - 2; // offset +2 GMT
-    // quick fix start
-    let fixedHours = hours;
-    if (fixedHours === -2) fixedHours = 22;
-    if (fixedHours === -1) fixedHours = 23;
-    const displayHours = fixedHours < 10 ? `0${fixedHours}` : fixedHours;
-    // quick fix end
-    // const displayHours = hours < 10 ? `0${hours}` : hours;
-    const minutes = date.getMinutes();
-    const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${displayHours}:${displayMinutes}`;
-  };
-
-  const getIsochronesResponse = async (timestamp) => fetch('/api/isochrone', {
-    method: 'POST',
-    body: JSON.stringify({ timestamp }),
-  })
-    .then((response) => response.json())
-    .then((data) => data);
+  const startHours = getStartHours(config.startHour);
 
   const handleCapture = async () => {
     console.log('starting capture');
     setCaptureInProgress(true);
-
-    const start = new Date();
-    start.setHours(startHours, 0, 0);
-    const minutesInDay = 1440;
-    const minuteInMs = 60000;
 
     const screenshoter = new SimpleMapScreenshoter({
       hidden: true,
     });
     screenshoter.addTo(map);
 
-    const dates = [];
+    const startDate = new Date();
+    startDate.setHours(startHours, 0, 0);
 
-    for (let i = 0; i < minutesInDay; i += 1) {
-      dates.push(new Date(start.getTime() + i * minuteInMs));
+    if (config.mode === 'date') {
+      await screenshotByDate(map, screenshoter, setGeojsonData, setMapTime, startDate);
+    } else {
+      await screenshotByTraveltime(
+        map,
+        screenshoter,
+        setGeojsonData,
+        setCurrentTraveltime,
+        startDate,
+      );
     }
 
-    for (const [index, date] of dates.entries()) {
-      console.log(`date in client: ${date}`);
-      try {
-        console.log(`processing entry #${index + 1} out of ${dates.length}`);
-        const res = await getIsochronesResponse(date.toISOString());
-        setGeojsonData(timeMapResponseToGeoJSON(res, getPolygonFromBounds(map)));
-        setMapTime(getHoursAndMinutes(date));
-        const blob = await screenshoter.takeScreen('blob');
-        FileSaver.saveAs(blob, `image-${index + 1}.png`);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    console.log('done capture');
     setCaptureInProgress(false);
-    console.log('capture complete');
   };
 
   useEffect(async () => {
@@ -89,7 +57,7 @@ function MapHandler() {
 
   useEffect(async () => {
     const markers = L.layerGroup();
-    const marker = L.marker({ lat: 40.752655, lng: -73.977295 }, {
+    const marker = L.marker({ lat: config.coords.lat, lng: config.coords.lng }, {
       icon: L.icon({
         iconUrl: '/images/map_marker.svg',
         iconSize: [26, 37],
@@ -97,24 +65,24 @@ function MapHandler() {
     });
     marker.addTo(markers);
     markers.addTo(map);
-
-    try {
-      const start = new Date();
-      start.setHours(startHours, 0, 0);
-      const isochrones = await getIsochronesResponse(
-        start.toISOString(),
-      );
-      setGeojsonData(timeMapResponseToGeoJSON(isochrones, getPolygonFromBounds(map)));
-    } catch (error) {
-      console.error(error);
-    }
   }, []);
 
   return (
     <>
       {!captureInProgress
-        && <button type="button" style={{ position: 'absolute', zIndex: 1000, right: 0 }} onClick={() => handleCapture()}>Start capture</button>}
-
+        && (
+        <button
+          type="button"
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            right: 0,
+          }}
+          onClick={() => handleCapture()}
+        >
+          Start capture
+        </button>
+        )}
       <div className="logo">
         <img
           src="/images/tt.png"
@@ -122,8 +90,20 @@ function MapHandler() {
         />
       </div>
       <div className="timestamp">
-        {mapTime}
+        <div>
+          {mapTime}
+        </div>
       </div>
+
+      {
+        (captureInProgress && config.mode === 'traveltime') && (
+          <div className="reachable-minutes-text">
+            <div>
+              {` Where's reachable from ${config.locationName} within ${currentTraveltime} minutes`}
+            </div>
+          </div>
+        )
+      }
     </>
   );
 }

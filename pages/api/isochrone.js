@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import * as config from '../../config.json';
 
 const traveltimejs = require('traveltimejs');
 
@@ -7,23 +8,22 @@ process.env.TRAVELTIME_KEY = '8d8ba745bfe89933069cf7ec4b1b87ad';
 
 export default async function handler(req, res) {
   try {
-    const departure = JSON.parse(req.body).timestamp;
-    const modified = `${departure.substring(0, departure.lastIndexOf('.'))}+05:00`;
-    console.log(`request date: ${modified}`);
+    const { timestamp, traveltime } = JSON.parse(req.body);
+    const gmtModifiedDate = `${timestamp.substring(0, timestamp.lastIndexOf('.'))}+05:00`;
     const result = await traveltimejs.time_map({
       departure_searches: [
         {
           id: randomBytes(16).toString('hex'),
           coords: {
-            lat: 40.752655,
-            lng: -73.977295,
+            lat: config.coords.lat,
+            lng: config.coords.lng,
           },
           transportation: {
             type: 'public_transport',
-            walking_time: 1500,
+            walking_time: traveltime < 1500 ? traveltime : 1500,
           },
-          travel_time: 3600,
-          departure_time: modified,
+          travel_time: traveltime || config.defaultTraveltime,
+          departure_time: gmtModifiedDate,
         },
       ],
     });
