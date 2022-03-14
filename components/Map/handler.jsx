@@ -13,7 +13,7 @@ function MapHandler() {
   const [currentTraveltime, setCurrentTraveltime] = useState();
   const [captureInProgress, setCaptureInProgress] = useState(false);
 
-  const getStartHours = (hours) => hours + 2; // offset Isos conversion
+  const getStartHours = (hours) => hours + config.isosConversionOffset;
   const startHours = getStartHours(config.startHour);
 
   const handleCapture = async () => {
@@ -30,7 +30,7 @@ function MapHandler() {
 
     if (config.mode === 'date') {
       await screenshotByDate(map, screenshoter, setGeojsonData, setMapTime, startDate);
-    } else {
+    } else if (config.mode === 'traveltime') {
       await screenshotByTraveltime(
         map,
         screenshoter,
@@ -38,6 +38,8 @@ function MapHandler() {
         setCurrentTraveltime,
         startDate,
       );
+    } else {
+      throw Error('invalid mode selected in config.json');
     }
 
     console.log('done capture');

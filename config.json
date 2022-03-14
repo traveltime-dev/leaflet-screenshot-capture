@@ -10,6 +10,14 @@
     "zoom": 11,
     "mode": "date",
     "startHour": 18,
-    "locationName": "Penn Station",
-    "defaultTraveltime": 3600
+    "locationName": "",
+    "defaultTraveltime": 3600,
+    "colors": {
+        "fillColor": "",
+        "borderColor": "",
+        "fillOpacity": "",
+        "borderOpacity": ""
+    },
+    "gmtModifier": "",
+    "isosConversionOffset": 2
 }
