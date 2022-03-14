@@ -39,7 +39,7 @@ function MapHandler() {
         startDate,
       );
     } else {
-      throw Error('invalid mode selected in config.json');
+      console.error('invalid mode selected in config.json');
     }
 
     console.log('done capture');
