@@ -19,5 +19,6 @@
         "borderOpacity": ""
     },
     "gmtModifier": "",
-    "isosConversionOffset": 2
+    "isosConversionOffset": 2,
+    "showLogo": true
 }

@@ -85,12 +85,17 @@ function MapHandler() {
           Start capture
         </button>
         )}
-      <div className="logo">
-        <img
-          src="/images/tt.png"
-          alt="TravelTime logo"
-        />
-      </div>
+      {
+          config.showLogo && (
+            <div className="logo">
+              <img
+                src="/images/tt.png"
+                alt="TravelTime logo"
+              />
+            </div>
+          )
+        }
+
       <div className="timestamp">
         <div>
           {mapTime}
