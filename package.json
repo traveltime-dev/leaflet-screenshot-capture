@@ -15,7 +15,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-leaflet": "^3.2.5",
-    "traveltimejs": "github:traveltime-dev/traveltime-sdk-nodejs"
+    "traveltime-api": "^2.7.0"
   },
   "devDependencies": {
     "eslint": "^8.7.0",
