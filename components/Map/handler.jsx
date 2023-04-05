@@ -46,7 +46,7 @@ function MapHandler() {
     setCaptureInProgress(false);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (geojsonData) {
       const obj = L.geoJSON(geojsonData, {
         style: (feat) => (feat?.properties),
@@ -57,7 +57,7 @@ function MapHandler() {
     }
   }, [geojsonData]);
 
-  useEffect(async () => {
+  useEffect(() => {
     const markers = L.layerGroup();
     const marker = L.marker({ lat: config.coords.lat, lng: config.coords.lng }, {
       icon: L.icon({

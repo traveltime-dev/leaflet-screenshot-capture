@@ -9,21 +9,21 @@
   },
   "dependencies": {
     "file-saver": "^2.0.5",
-    "leaflet": "^1.7.1",
-    "leaflet-simple-map-screenshoter": "^0.4.5",
-    "next": "12.0.8",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-leaflet": "^3.2.5",
-    "traveltime-api": "^2.7.0"
+    "leaflet": "^1.9.3",
+    "leaflet-simple-map-screenshoter": "^0.5.0",
+    "next": "13.2.4",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "react-leaflet": "^4.2.1",
+    "traveltime-api": "^3.1.4"
   },
   "devDependencies": {
-    "eslint": "^8.7.0",
+    "eslint": "^8.37.0",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-next": "12.0.8",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0"
+    "eslint-config-next": "13.2.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0"
   }
 }
