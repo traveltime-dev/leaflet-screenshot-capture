@@ -12,7 +12,7 @@
     "leaflet": "^1.9.3",
     "leaflet-simple-map-screenshoter": "^0.5.0",
     "next": "13.2.4",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "18.2.0",
     "react-leaflet": "^4.2.1",
     "traveltime-api": "^5.6.0"
